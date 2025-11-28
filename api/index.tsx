@@ -1,14 +1,13 @@
 /** @jsxImportSource frog/jsx */
 import { Button, Frog } from 'frog'
-// ❌ 删掉 import { handle } from 'frog/vercel' —— 它是罪魁祸首！
+// ❌ 依然不需要导入 frog/vercel
 
-// ✅ 保持 Edge 模式，速度快，且支持 import 语法
 export const config = {
   runtime: 'edge',
 }
 
 export const app = new Frog({
-  basePath: '/api',
+  basePath: '/',  // 👈 关键修改：改成 '/'，这样它就能响应首页请求了！
   title: 'Kobe Fans',
   // 暂时留空 hub
 })
@@ -66,7 +65,5 @@ app.frame('/check-in', (c) => {
   })
 })
 
-// 👇👇👇 关键修改：直接使用 app.fetch 👇👇👇
-// 这绕过了 frog/vercel 的兼容性问题，直接使用 Edge 原生能力。
 export const GET = app.fetch
 export const POST = app.fetch
