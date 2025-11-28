@@ -1,0 +1,62 @@
+Role: You are an expert Web3 developer specializing in Farcaster Frames and Mini Apps (v2). You are using the "Frog" framework (based on Hono) and deploying to Vercel.
+
+Task: Create a complete, production-ready Farcaster Mini App named "Kobe Fans".
+
+**CRITICAL Constraints (To avoid common errors):**
+1. **Runtime:** MUST use `export const config = { runtime: 'edge' }`. Do NOT use Node.js runtime to avoid SyntaxErrors with imports.
+2. **Routing:** Use `basePath: '/'` in the Frog instance. Handle all routing via a `vercel.json` rewrite rule pointing to `/api`.
+3. **Export:** Export `GET` and `POST` using `app.fetch`. Do NOT use `frog/vercel` adapters or `devtools` (they cause Edge compatibility issues).
+4. **HTML Handling:** Use `app.hono.get('/', ...)` to serve the HTML. Do NOT use `app.route` or `c.res` for the Mini App view.
+5. **Mini App Logic:** The HTML MUST include the Farcaster Frame SDK script and call `sdk.actions.ready()` immediately to prevent the splash screen from hanging.
+6. **Persistence:** Use `localStorage` for the check-in logic (simulated database).
+
+**Project Structure & Content:**
+
+Please generate the code for the following 4 files exactly:
+
+### 1. `package.json`
+- Use `"type": "module"`.
+- Dependencies: `frog`, `hono`, `vercel`.
+- No devDependencies needed.
+
+### 2. `tsconfig.json`
+- Use `"moduleResolution": "Bundler"`.
+- Use `"jsxImportSource": "frog/jsx"`.
+- Allow strictly typed imports.
+
+### 3. `vercel.json`
+- Configure a rewrite rule that sends ALL traffic `/(.*)` to `/api`.
+
+### 4. `api/index.tsx` (The Core Logic)
+- **Manifest:** Create an endpoint at `/.well-known/farcaster.json` returning the specific JSON provided below.
+- **UI Design (CSS):**
+  - Theme: Kobe Bryant (Black background, Gold #FDB927 accents, Purple #552583).
+  - Layout: Use a `.main-container` (max-width 400px) to keep the Score Card and Buttons perfectly aligned and equal width.
+  - Score Card: Must use a pseudo-element (`::before`) to display a background image (`/image.png`) with `opacity: 0.3` (transparent), ensuring text remains opaque and readable on top.
+- **Functionality:**
+  - Display "Current Points".
+  - 4 Buttons: "Check In (Base Chain)", "Twitter (@xc_kobe)", "Farcaster", "Telegram Group".
+  - JavaScript logic to handle daily check-in (add 10 points, save date to localStorage, update UI).
+
+**Manifest JSON Data (Embed this in api/index.tsx):**
+```json
+{
+  "frame": {
+    "version": "1",
+    "name": "Kobe Fans",
+    "iconUrl": "[https://kobe-fans.vercel.app/icon.png](https://kobe-fans.vercel.app/icon.png)",
+    "homeUrl": "[https://kobe-fans.vercel.app](https://kobe-fans.vercel.app)",
+    "imageUrl": "[https://kobe-fans.vercel.app/image.png](https://kobe-fans.vercel.app/image.png)",
+    "splashImageUrl": "[https://kobe-fans.vercel.app/splash.png](https://kobe-fans.vercel.app/splash.png)",
+    "splashBackgroundColor": "#000000",
+    "webhookUrl": "[https://kobe-fans.vercel.app/api/webhook](https://kobe-fans.vercel.app/api/webhook)",
+    "subtitle": "fans",
+    "description": "all kobe fans",
+    "primaryCategory": "entertainment"
+  },
+  "accountAssociation": {
+    "header": "eyJmaWQiOjIxNDgwLCJ0eXBlIjoiYXV0aCIsImtleSI6IjB4ODcxN2ZDMEY2ZjllNjdkMzhmQTc1NzFjNTUwMWRmNzA3QTIzQzFBNiJ9",
+    "payload": "eyJkb21haW4iOiJrb2JlLWZhbnMudmVyY2VsLmFwcCJ9",
+    "signature": "lfmHILGn3ypB75mHZEFJOt5PksFCQ5BJGH1J1bZ0sNozFvNdd7bebnLClkAnKdCbKlZJZ6065y8vmA2mRIdF8Rs="
+  }
+}
