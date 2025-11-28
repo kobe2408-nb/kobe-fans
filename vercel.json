@@ -1,4 +1,7 @@
 {
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/api" }
+  ],
   "redirects": [
     {
       "source": "/.well-known/farcaster.json",
