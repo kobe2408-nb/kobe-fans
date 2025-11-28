@@ -1,15 +1,16 @@
 /** @jsxImportSource frog/jsx */
 import { Button, Frog } from 'frog'
-// ❌ 依然不需要导入 frog/vercel
+import { devtools } from 'frog/dev' // 👈 加回调试工具
+// import { handle } from 'frog/vercel' // 暂时不用 handle
 
+// 保持 Edge 模式，这个目前是不报错的
 export const config = {
   runtime: 'edge',
 }
 
 export const app = new Frog({
-  basePath: '/',  // 👈 关键修改：改成 '/'，这样它就能响应首页请求了！
+  basePath: '/api', // 👈 改回 /api
   title: 'Kobe Fans',
-  // 暂时留空 hub
 })
 
 // 模拟数据库
@@ -64,6 +65,9 @@ app.frame('/check-in', (c) => {
     ],
   })
 })
+
+// 开启调试后台
+devtools(app, { assetsPath: '/.frog' })
 
 export const GET = app.fetch
 export const POST = app.fetch
