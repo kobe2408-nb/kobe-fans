@@ -2,10 +2,12 @@
 import { Button, Frog } from 'frog'
 import { devtools } from 'frog/dev'
 
-// 👇👇👇 这里的 @ts-ignore 是关键！它能强制忽略报错 👇👇👇
-// @ts-ignore
-import { handle } from 'frog/vercel'
+// ✅ 1. 强制使用 Edge 模式 (解决 Node 环境下的 import 报错)
+export const config = {
+  runtime: 'edge',
+}
 
+// ✅ 2. 基础路径设为 /api
 export const app = new Frog({
   basePath: '/api',
   title: 'Kobe Fans',
@@ -61,5 +63,6 @@ app.frame('/check-in', (c) => {
 
 devtools(app, { assetsPath: '/.frog' })
 
-export const GET = handle(app)
-export const POST = handle(app)
+// ✅ 3. 直接使用 fetch 导出 (避开所有兼容性坑)
+export const GET = app.fetch
+export const POST = app.fetch
