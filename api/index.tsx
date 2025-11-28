@@ -2,18 +2,17 @@
 import { Button, Frog } from 'frog'
 import { devtools } from 'frog/dev'
 
-// ✅ 1. 必须使用 Edge，否则报 SyntaxError
+// ✅ 1. 强制 Edge 模式 (解决 SyntaxError)
 export const config = {
   runtime: 'edge',
 }
 
-// ✅ 2. 路径对齐
+// ✅ 2. 基础路径设为 /api
 export const app = new Frog({
   basePath: '/api',
   title: 'Kobe Fans',
 })
 
-// 模拟数据库
 const db = new Map<number, { points: number, lastCheckIn: string }>();
 
 app.frame('/', (c) => {
@@ -62,8 +61,9 @@ app.frame('/check-in', (c) => {
   })
 })
 
-devtools(app, { assetsPath: '/.frog' })
+// ❌ 删掉 devtools (因为在 api/index.tsx 模式下，子路径调试会出问题，我们先确保主功能可用)
+// devtools(app, { assetsPath: '/.frog' })
 
-// ✅ 3. 放弃 frog/vercel，直接用原生 fetch 导出，避开所有兼容性 bug
+// ✅ 3. 直接使用 fetch 导出
 export const GET = app.fetch
 export const POST = app.fetch
