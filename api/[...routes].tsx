@@ -1,6 +1,6 @@
 /** @jsxImportSource frog/jsx */
 import { Button, Frog } from 'frog'
-import { devtools } from 'frog/dev'
+// ❌ 彻底删除 import { devtools } from 'frog/dev' (它是 Edge 环境报错的根源)
 
 // ✅ 1. 强制 Edge 模式 (解决 SyntaxError)
 export const config = {
@@ -61,7 +61,7 @@ app.frame('/check-in', (c) => {
   })
 })
 
-devtools(app, { assetsPath: '/.frog' })
+// ❌ 删除 devtools(app, ...) 调用
 
 // ✅ 3. 直接导出 fetch
 export const GET = app.fetch
