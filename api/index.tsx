@@ -1,15 +1,15 @@
 import { Button, Frog } from 'frog'
-// import { neynar } from 'frog/hubs' // 暂时注释掉，如果没配置好Hub容易报错
-import { handle } from 'frog/vercel' // 👈 关键：引入 Vercel 处理器
+import { handle } from 'frog/vercel'
+// import { neynar } from 'frog/hubs' // 暂时不用 Hub，防止报错
 
-// 初始化 App
 export const app = new Frog({
+  basePath: '/api',
   title: 'Kobe Fans',
-  basePath: '/api', // 👈 关键：设置基础路径，防止路径混乱
-  // 如果你还没配好 NEYNAR_API_KEY，这一行先注释掉，用默认的免费额度测试
-  // hub: neynar({ apiKey: process.env.NEYNAR_API_KEY || 'NEYNAR_API_DOCS' }),
+  // 👇 之前报错就是因为这里调用了 neynar 但上面没引入。我把它删掉了。
+  // hub: neynar({ apiKey: process.env.NEYNAR_API_KEY }), 
 })
 
+// 模拟数据库
 const db = new Map<number, { points: number, lastCheckIn: string }>();
 
 app.frame('/', (c) => {
@@ -21,9 +21,13 @@ app.frame('/', (c) => {
       </div>
     ),
     intents: [
-      <Button.Link href="https://twitter.com/xc_kobe">关注小科比推特</Button.Link>,
-      <Button.Link href="https://warpcast.com/kobe2408">关注小科比Farcaster</Button.Link>,
+      // 功能1: 关注 Twitter (跳转链接)
+      <Button.Link href="https://twitter.com/xc_kobe">关注 Twitter @xc_kobe</Button.Link>,
+      // 功能2: 关注 Farcaster (跳转链接)
+      <Button.Link href="https://warpcast.com/kobe2408">关注 Farcaster @kobe2408</Button.Link>,
+      // 功能4: 加入群 (跳转链接)
       <Button.Link href="https://t.me/+f3CdHiJgXY43ZDk1">空投消息禁言粉丝群</Button.Link>,
+      // 功能4: 进入签到页面
       <Button action="/check-in">Base 链上签到</Button>,
     ],
   })
@@ -58,6 +62,5 @@ app.frame('/check-in', (c) => {
   })
 })
 
-// 👇 关键：这才是 Vercel 能看懂的“通行证”
 export const GET = handle(app)
 export const POST = handle(app)
