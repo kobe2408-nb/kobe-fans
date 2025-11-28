@@ -2,11 +2,19 @@
 import { Button, Frog } from 'frog'
 import { handle } from 'frog/vercel'
 
-// 初始化 App
+// 👇👇👇 关键修复：强制开启 Edge Runtime 👇👇👇
+// 这行代码会告诉 Vercel：“别用老旧的 Node 模式跑我，用最新的 Edge 模式！”
+// Edge 模式天生支持 import 语法，彻底根治报错。
+export const config = {
+  runtime: 'edge',
+}
+// 👆👆👆 关键修复结束 👆👆👆
+
 export const app = new Frog({
   basePath: '/api',
   title: 'Kobe Fans',
-  // 暂时不填 hub，确保先跑通
+  // 这里可以放回你的 hub 配置，或者先留空测试
+  // hub: neynar({ apiKey: process.env.NEYNAR_API_KEY }),
 })
 
 // 模拟数据库
