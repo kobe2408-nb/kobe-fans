@@ -2,12 +2,16 @@
 import { Button, Frog } from 'frog'
 import { handle } from 'frog/vercel'
 
-// ❌ 删掉了 config = { runtime: 'edge' }，回归 Node 模式，兼容性最强。
+// ✅ 再次开启 Edge 模式
+// 之前失败是因为配置文件冲突，现在配置文件已修好，Edge 模式是解决 SyntaxError 的唯一解药。
+export const config = {
+  runtime: 'edge',
+}
 
 export const app = new Frog({
   basePath: '/api',
   title: 'Kobe Fans',
-  // 这里先留空，等跑通了再加 Key
+  // 暂时留空 hub，确保最简运行
 })
 
 // 模拟数据库
