@@ -1,7 +1,7 @@
 {
   "name": "kobe-fans",
   "private": true,
-  "type": "module", 
+  "type": "module",
   "version": "0.0.0",
   "scripts": {
     "dev": "frog dev",
@@ -11,6 +11,10 @@
     "frog": "latest",
     "hono": "latest",
     "vercel": "latest"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
   },
   "engines": {
     "node": ">=18.0.0"
