@@ -2,17 +2,18 @@
 import { Button, Frog } from 'frog'
 import { devtools } from 'frog/dev'
 
-// ✅ 1. 强制 Edge 模式 (这是解决报错的唯一解药)
+// ✅ 1. 必须使用 Edge，否则报 SyntaxError
 export const config = {
   runtime: 'edge',
 }
 
-// ✅ 2. 基础路径设为 /api
+// ✅ 2. 路径对齐
 export const app = new Frog({
   basePath: '/api',
   title: 'Kobe Fans',
 })
 
+// 模拟数据库
 const db = new Map<number, { points: number, lastCheckIn: string }>();
 
 app.frame('/', (c) => {
@@ -63,6 +64,6 @@ app.frame('/check-in', (c) => {
 
 devtools(app, { assetsPath: '/.frog' })
 
-// ✅ 3. 直接使用 fetch 导出 (避开所有兼容性坑)
+// ✅ 3. 放弃 frog/vercel，直接用原生 fetch 导出，避开所有兼容性 bug
 export const GET = app.fetch
 export const POST = app.fetch
