@@ -1,0 +1,16 @@
+{
+  "name": "kobe-fans",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "frog dev"
+  },
+  "dependencies": {
+    "@hono/node-server": "latest",
+    "frog": "latest",
+    "hono": "^4"
+  },
+  "devDependencies": {
+    "typescript": "latest"
+  }
+}
