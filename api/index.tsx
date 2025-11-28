@@ -1,12 +1,12 @@
+/** @jsxImportSource frog/jsx */
 import { Button, Frog } from 'frog'
 import { handle } from 'frog/vercel'
-// import { neynar } from 'frog/hubs' // 暂时不用 Hub，防止报错
 
+// 初始化 App
 export const app = new Frog({
   basePath: '/api',
   title: 'Kobe Fans',
-  // 👇 之前报错就是因为这里调用了 neynar 但上面没引入。我把它删掉了。
-  // hub: neynar({ apiKey: process.env.NEYNAR_API_KEY }), 
+  // 暂时不填 hub，确保先跑通
 })
 
 // 模拟数据库

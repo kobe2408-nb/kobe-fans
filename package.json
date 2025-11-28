@@ -1,16 +1,17 @@
 {
   "name": "kobe-fans",
   "private": true,
-  "type": "module",
+  "version": "0.0.0",
   "scripts": {
-    "dev": "frog dev"
+    "dev": "frog dev",
+    "deploy": "vercel"
   },
   "dependencies": {
-    "@hono/node-server": "latest",
     "frog": "latest",
-    "hono": "^4"
+    "hono": "latest",
+    "vercel": "latest"
   },
-  "devDependencies": {
-    "typescript": "latest"
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
