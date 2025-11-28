@@ -1,15 +1,15 @@
 /** @jsxImportSource frog/jsx */
 import { Button, Frog } from 'frog'
-import { devtools } from 'frog/dev' // 👈 加回调试工具
-// import { handle } from 'frog/vercel' // 暂时不用 handle
+import { devtools } from 'frog/dev'
 
-// 保持 Edge 模式，这个目前是不报错的
+// ✅ 1. 开启 Edge 模式
 export const config = {
   runtime: 'edge',
 }
 
+// ✅ 2. 这里的 basePath 必须是 /api
 export const app = new Frog({
-  basePath: '/api', // 👈 改回 /api
+  basePath: '/api',
   title: 'Kobe Fans',
 })
 
@@ -25,13 +25,9 @@ app.frame('/', (c) => {
       </div>
     ),
     intents: [
-      // 功能1: 关注 Twitter (跳转链接)
-      <Button.Link href="https://twitter.com/xc_kobe">关注 Twitter @xc_kobe</Button.Link>,
-      // 功能2: 关注 Farcaster (跳转链接)
-      <Button.Link href="https://warpcast.com/kobe2408">关注 Farcaster @kobe2408</Button.Link>,
-      // 功能4: 加入群 (跳转链接)
-      <Button.Link href="https://t.me/+f3CdHiJgXY43ZDk1">空投消息禁言粉丝群</Button.Link>,
-      // 功能4: 进入签到页面
+      <Button.Link href="https://twitter.com/xc_kobe">推特 @xc_kobe</Button.Link>,
+      <Button.Link href="https://warpcast.com/kobe2408">Farcaster</Button.Link>,
+      <Button.Link href="https://t.me/+f3CdHiJgXY43ZDk1">粉丝群</Button.Link>,
       <Button action="/check-in">Base 链上签到</Button>,
     ],
   })
@@ -66,7 +62,7 @@ app.frame('/check-in', (c) => {
   })
 })
 
-// 开启调试后台
+// ⚠️ 注意：移除了 devtools 的 assetPath 配置，使用默认值，防止白屏
 devtools(app, { assetsPath: '/.frog' })
 
 export const GET = app.fetch
