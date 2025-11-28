@@ -1,15 +1,13 @@
 /** @jsxImportSource frog/jsx */
 import { Button, Frog } from 'frog'
 import { devtools } from 'frog/dev'
+// @ts-ignore
+import { handle } from 'frog/vercel'
 
-// ✅ 1. 强制使用 Edge 模式 (解决 Node 环境下的 import 报错)
-export const config = {
-  runtime: 'edge',
-}
+// ❌ 没有任何 config 配置 (默认使用最稳定的 Node 模式)
 
-// ✅ 2. 基础路径设为 /api
 export const app = new Frog({
-  basePath: '/api',
+  basePath: '/api', // ✅ 明确告诉程序它运行在 /api 下
   title: 'Kobe Fans',
 })
 
@@ -63,6 +61,6 @@ app.frame('/check-in', (c) => {
 
 devtools(app, { assetsPath: '/.frog' })
 
-// ✅ 3. 直接使用 fetch 导出 (避开所有兼容性坑)
-export const GET = app.fetch
-export const POST = app.fetch
+// ✅ 使用 handle 处理请求 (这是 Vercel 标准做法)
+export const GET = handle(app)
+export const POST = handle(app)
