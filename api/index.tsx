@@ -25,7 +25,10 @@ app.hono.get('/.well-known/farcaster.json', (c) => {
       "imageUrl": "https://kobe-fans.vercel.app/image.png",
       "splashImageUrl": "https://kobe-fans.vercel.app/splash.png",
       "splashBackgroundColor": "#000000",
-      "webhookUrl": "https://kobe-fans.vercel.app/api/webhook"
+      "webhookUrl": "https://kobe-fans.vercel.app/api/webhook",
+      "subtitle": "fans",
+      "description": "all kobe fans",
+      "primaryCategory": "entertainment"
     },
     "accountAssociation": {
       "header": "eyJmaWQiOjIxNDgwLCJ0eXBlIjoiYXV0aCIsImtleSI6IjB4ODcxN2ZDMEY2ZjllNjdkMzhmQTc1NzFjNTUwMWRmNzA3QTIzQzFBNiJ9",
@@ -38,8 +41,8 @@ app.hono.get('/.well-known/farcaster.json', (c) => {
 // -------------------------------------------------------------------------
 // 2. 主页 (Mini App 前端页面 + Frame Meta)
 // -------------------------------------------------------------------------
-app.route('/', (c) => {
-  // 这里返回一段完整的 HTML，这就是 Mini App 的真身
+// 👇👇👇 修正：使用 app.hono.get 而不是 app.route 👇👇👇
+app.hono.get('/', (c) => {
   return c.html(`
     <!DOCTYPE html>
     <html lang="zh">
@@ -48,14 +51,12 @@ app.route('/', (c) => {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Kobe Fans Mini App</title>
       
-      <!-- 👇 Frame Meta Tags (保留Frame功能，让分享卡片也能看) 👇 -->
       <meta property="fc:frame" content="vNext" />
       <meta property="fc:frame:image" content="https://kobe-fans.vercel.app/image.png" />
       <meta property="fc:frame:button:1" content="打开小程序" />
       <meta property="fc:frame:button:1:action" content="link" />
       <meta property="fc:frame:button:1:target" content="https://kobe-fans.vercel.app" />
 
-      <!-- 👇 样式表 (CSS) - 黑金科比风 👇 -->
       <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
         
@@ -76,7 +77,7 @@ app.route('/', (c) => {
           padding: 20px;
           text-align: center;
           background: linear-gradient(180deg, #1a1a1a 0%, #000000 100%);
-          border-bottom: 2px solid #FDB927; /* 湖人金 */
+          border-bottom: 2px solid #FDB927;
         }
 
         .title {
@@ -88,7 +89,7 @@ app.route('/', (c) => {
 
         .subtitle {
           font-size: 14px;
-          color: #552583; /* 湖人紫 */
+          color: #552583;
           font-weight: bold;
         }
 
@@ -144,7 +145,6 @@ app.route('/', (c) => {
           transform: scale(0.98);
         }
 
-        /* 按钮颜色 */
         .btn-twitter { background-color: #1DA1F2; color: white; }
         .btn-farcaster { background-color: #855DCD; color: white; }
         .btn-telegram { background-color: #0088cc; color: white; }
@@ -167,21 +167,17 @@ app.route('/', (c) => {
       </style>
     </head>
     <body>
-
-      <!-- 顶部 -->
       <div class="header">
         <div class="title">KOBE FANS</div>
         <div class="subtitle">Mamba Mentality Forever</div>
       </div>
 
-      <!-- 积分卡片 -->
       <div class="card">
         <div class="score-label">当前积分 (Points)</div>
         <div class="score-box" id="score">0</div>
         <div style="color: #666; font-size: 12px;">每日签到 +10 分</div>
       </div>
 
-      <!-- 按钮组 -->
       <div class="btn-group">
         <button class="btn btn-checkin" id="btn-checkin" onclick="handleCheckIn()">
           🏀 Base 链上签到
@@ -202,35 +198,26 @@ app.route('/', (c) => {
 
       <div class="log" id="log-area">Loading...</div>
 
-      <!-- 👇👇👇 核心逻辑：Farcaster SDK 👇👇👇 -->
       <script type="module">
-        // 1. 引入 Farcaster SDK
         import sdk from 'https://esm.sh/@farcaster/frame-sdk@0.0.18';
 
-        // 2. 初始化逻辑
         async function init() {
           const logArea = document.getElementById('log-area');
           
           try {
-            // 告诉 Farcaster "我加载好了"，这句最关键！没有它就会卡屏！
             await sdk.actions.ready();
             logArea.innerText = "Mini App Loaded Successfully ✅";
-            
-            // 加载本地积分数据
             loadUserData();
           } catch (e) {
             logArea.innerText = "Error: " + e.message;
-            // 就算报错，也尝试加载数据，保证网页可用
             loadUserData();
           }
         }
 
-        // 3. 运行初始化
         init();
 
-        // --- 签到逻辑 (模拟) ---
         window.handleCheckIn = function() {
-          const today = new Date().toISOString().split('T')[0]; // 获取今天日期 2023-10-27
+          const today = new Date().toISOString().split('T')[0];
           const lastCheckIn = localStorage.getItem('lastCheckIn');
           let points = parseInt(localStorage.getItem('points') || '0');
 
@@ -239,15 +226,11 @@ app.route('/', (c) => {
             return;
           }
 
-          // 执行签到
           points += 10;
           localStorage.setItem('points', points);
           localStorage.setItem('lastCheckIn', today);
 
-          // 更新UI
           updateUI(points, true);
-          
-          // 可以在这里加一个漂亮的弹窗或者震动
           alert('✅ 签到成功！积分 +10');
         }
 
@@ -267,7 +250,6 @@ app.route('/', (c) => {
           if (isCheckedIn) {
             btn.innerText = "✅ 今日已签到";
             btn.classList.add('btn-disabled');
-            // btn.disabled = true; // 可选：禁用按钮
           } else {
             btn.innerText = "🏀 Base 链上签到";
             btn.classList.remove('btn-disabled');
