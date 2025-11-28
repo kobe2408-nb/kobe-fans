@@ -1,19 +1,16 @@
 /** @jsxImportSource frog/jsx */
 import { Button, Frog } from 'frog'
 import { devtools } from 'frog/dev'
+import { handle } from 'frog/vercel' // 👈 这次我们把官方工具请回来，它最稳
 
-// ✅ 1. 开启 Edge 模式
-export const config = {
-  runtime: 'edge',
-}
+// ❌ 删掉 config = { runtime: 'edge' }
+// ✅ 我们用默认的 Node.js 模式，因为它最听话，不会莫名其妙 404
 
-// ✅ 2. 这里的 basePath 必须是 /api
 export const app = new Frog({
   basePath: '/api',
   title: 'Kobe Fans',
 })
 
-// 模拟数据库
 const db = new Map<number, { points: number, lastCheckIn: string }>();
 
 app.frame('/', (c) => {
@@ -62,8 +59,8 @@ app.frame('/check-in', (c) => {
   })
 })
 
-// ⚠️ 注意：移除了 devtools 的 assetPath 配置，使用默认值，防止白屏
 devtools(app, { assetsPath: '/.frog' })
 
-export const GET = app.fetch
-export const POST = app.fetch
+// 👇 使用官方 handle，它会自动处理路由匹配
+export const GET = handle(app)
+export const POST = handle(app)
