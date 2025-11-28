@@ -2,18 +2,17 @@
 import { Button, Frog } from 'frog'
 import { devtools } from 'frog/dev'
 
-// ✅ 1. 开启 Edge 运行时 (这是解决报错的唯一方案)
+// ✅ 1. 强制 Edge 模式 (解决 SyntaxError)
 export const config = {
   runtime: 'edge',
 }
 
-// ✅ 2. 这里的 basePath 必须是 /api
+// ✅ 2. 基础路径设为 /api
 export const app = new Frog({
   basePath: '/api',
   title: 'Kobe Fans',
 })
 
-// 模拟数据库
 const db = new Map<number, { points: number, lastCheckIn: string }>();
 
 app.frame('/', (c) => {
@@ -64,6 +63,6 @@ app.frame('/check-in', (c) => {
 
 devtools(app, { assetsPath: '/.frog' })
 
-// ✅ 3. 直接导出 fetch (最稳的方式)
+// ✅ 3. 直接导出 fetch
 export const GET = app.fetch
 export const POST = app.fetch
