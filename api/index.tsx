@@ -1,15 +1,15 @@
 /** @jsxImportSource frog/jsx */
 import { Button, Frog } from 'frog'
-// ❌ 彻底删除 import { devtools } from 'frog/dev' (它是 Edge 环境报错的根源)
+// ❌ 坚决不引入 devtools，防止 Edge 报错
 
-// ✅ 1. 强制 Edge 模式 (解决 SyntaxError)
+// ✅ 1. 强制 Edge 模式
 export const config = {
   runtime: 'edge',
 }
 
-// ✅ 2. 基础路径设为 /api
+// ✅ 2. 这里的 basePath 改成 '/' (根目录)
 export const app = new Frog({
-  basePath: '/api',
+  basePath: '/', 
   title: 'Kobe Fans',
 })
 
@@ -60,8 +60,6 @@ app.frame('/check-in', (c) => {
     ],
   })
 })
-
-// ❌ 删除 devtools(app, ...) 调用
 
 // ✅ 3. 直接导出 fetch
 export const GET = app.fetch
