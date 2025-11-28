@@ -106,45 +106,201 @@ app.hono.get('/', (c) => {
           gap: 20px;
         }
 
-        /* 卡片样式修改开始 */
+        /* 卡片样式 */
         .card {
           width: 100%;
-          /* background: #111; Remove solid background */
-          background-color: #0a0a0a; /* 给一个极深的底色作为衬托 */
+          background-color: #0a0a0a;
           border: 1px solid #333;
           border-radius: 16px;
           padding: 20px;
           text-align: center;
           box-shadow: 0 4px 15px rgba(253, 185, 39, 0.1);
-          
-          /* 👇 关键：为伪元素定位做准备 👇 */
           position: relative;
-          overflow: hidden; /* 确保背景图不溢出圆角 */
+          overflow: hidden;
         }
 
-        /* 👇 新增：伪元素用于放置半透明背景图 👇 */
+        /* 背景图伪元素 */
         .card::before {
           content: "";
           position: absolute;
           top: 0; left: 0; right: 0; bottom: 0;
           background-image: url('https://kobe-fans.vercel.app/image.png');
-          background-size: cover; /* 铺满 */
-          background-position: center; /* 居中 */
+          background-size: cover;
+          background-position: center;
           opacity: 0.3; /* 30% 透明度 */
-          z-index: 0; /* 放在最底层 */
-          filter: grayscale(50%); /* 可选：稍微加点灰度让文字更突出，不需要可以删掉这行 */
+          z-index: 0;
         }
 
-        /* 👇 关键：确保卡片里的文字内容浮在背景图上面 👇 */
+        /* 确保内容在背景图之上 */
         .card > * {
           position: relative;
           z-index: 1;
         }
-        /* 卡片样式修改结束 */
 
         .score-box {
           font-size: 48px;
           font-weight: bold;
           color: #fff;
           margin: 10px 0;
-          text-shadow: 0 2px 4px rgba(0,0,0,0.5); /* 加点文字阴影增加可读性 */
+          text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .score-label {
+          color: #ccc;
+          font-size: 14px;
+        }
+
+        .btn-group {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          padding: 16px;
+          border-radius: 12px;
+          font-weight: bold;
+          font-size: 16px;
+          cursor: pointer;
+          text-decoration: none;
+          transition: transform 0.1s;
+          border: none;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .btn:active {
+          transform: scale(0.98);
+        }
+
+        .btn-twitter { background-color: #1DA1F2; color: white; }
+        .btn-farcaster { background-color: #855DCD; color: white; }
+        .btn-telegram { background-color: #0088cc; color: white; }
+        .btn-checkin { 
+          background: linear-gradient(90deg, #552583 0%, #FDB927 100%); 
+          color: white;
+          font-size: 18px;
+          border: 1px solid #FDB927;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .btn-disabled {
+          background: #333;
+          color: #888;
+          border: 1px solid #444;
+          cursor: not-allowed;
+        }
+
+        .log {
+          margin-top: 30px;
+          color: #444;
+          font-size: 12px;
+          text-align: center;
+        }
+      </style>
+    </head>
+    <body>
+
+      <div class="header">
+        <div class="title">KOBE FANS</div>
+        <div class="subtitle">Mamba Mentality Forever</div>
+      </div>
+
+      <div class="main-container">
+
+        <div class="card">
+          <div class="score-label">当前积分 (Points)</div>
+          <div class="score-box" id="score">0</div>
+          <div style="color: #ccc; font-size: 12px;">每日签到 +10 分</div>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-checkin" id="btn-checkin" onclick="handleCheckIn()">
+            🏀 Base 链上签到
+          </button>
+
+          <a href="https://twitter.com/xc_kobe" target="_blank" class="btn btn-twitter">
+            关注 Twitter @xc_kobe
+          </a>
+
+          <a href="https://warpcast.com/kobe2408" target="_blank" class="btn btn-farcaster">
+            关注 Farcaster @kobe2408
+          </a>
+
+          <a href="https://t.me/+f3CdHiJgXY43ZDk1" target="_blank" class="btn btn-telegram">
+            加入电报粉丝群
+          </a>
+        </div>
+
+      </div>
+
+      <div class="log" id="log-area">Loading...</div>
+
+      <script type="module">
+        import sdk from 'https://esm.sh/@farcaster/frame-sdk@0.0.18';
+
+        async function init() {
+          const logArea = document.getElementById('log-area');
+          
+          try {
+            await sdk.actions.ready();
+            logArea.innerText = "Mini App Loaded";
+            loadUserData();
+          } catch (e) {
+            logArea.innerText = "Error: " + e.message;
+            loadUserData();
+          }
+        }
+
+        init();
+
+        window.handleCheckIn = function() {
+          const today = new Date().toISOString().split('T')[0];
+          const lastCheckIn = localStorage.getItem('lastCheckIn');
+          let points = parseInt(localStorage.getItem('points') || '0');
+
+          if (lastCheckIn === today) {
+            alert('今天已经签到过了！明天再来吧。');
+            return;
+          }
+
+          points += 10;
+          localStorage.setItem('points', points);
+          localStorage.setItem('lastCheckIn', today);
+
+          updateUI(points, true);
+          alert('✅ 签到成功！积分 +10');
+        }
+
+        function loadUserData() {
+          const points = localStorage.getItem('points') || '0';
+          const lastCheckIn = localStorage.getItem('lastCheckIn');
+          const today = new Date().toISOString().split('T')[0];
+          
+          const isCheckedIn = (lastCheckIn === today);
+          updateUI(points, isCheckedIn);
+        }
+
+        function updateUI(points, isCheckedIn) {
+          document.getElementById('score').innerText = points;
+          const btn = document.getElementById('btn-checkin');
+          
+          if (isCheckedIn) {
+            btn.innerText = "✅ 今日已签到";
+            btn.classList.add('btn-disabled');
+          } else {
+            btn.innerText = "🏀 Base 链上签到";
+            btn.classList.remove('btn-disabled');
+          }
+        }
+      </script>
+    </body>
+    </html>
+  `)  
+})
+
+export const GET = app.fetch
+export const POST = app.fetch
